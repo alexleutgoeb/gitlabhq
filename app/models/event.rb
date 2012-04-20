@@ -104,6 +104,7 @@ class Event < ActiveRecord::Base
 
   delegate :name, :email, :to => :author, :prefix => true, :allow_nil => true
   delegate :title, :to => :issue, :prefix => true, :allow_nil => true
+  delegate :description, :to => :issue, :prefix => true, :allow_nil => true
   delegate :title, :to => :merge_request, :prefix => true, :allow_nil => true
 end
 # == Schema Information

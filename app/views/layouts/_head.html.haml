@@ -13,5 +13,7 @@
       = auto_discovery_link_tag(:atom, project_commits_url(@project, :atom, :ref => @ref, :private_token => current_user.private_token), :title => "Recent commits to #{@project.name}:#{@ref}")
     - if request.path == project_issues_path(@project)
       = auto_discovery_link_tag(:atom, project_issues_url(@project, :atom, :private_token => current_user.private_token), :title => "#{@project.name} issues")
+  - if request.path == "/" || request.path == projects_path
+    = auto_discovery_link_tag(:atom, projects_url(:atom, :private_token => current_user.private_token), :title => "#{@current_user.name} events")
   = csrf_meta_tags
 
