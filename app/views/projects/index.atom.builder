@@ -17,23 +17,23 @@ xml.feed "xmlns" => "http://www.w3.org/2005/Atom", "xmlns:media" => "http://sear
       end
       
       if event.issue?
-        xml.id      project_issue_path(event.project, event.issue, :action => event.action_name)
+        xml.id      project_issue_url(event.project, event.issue, :action => event.action_name)
         xml.link    :href => project_issue_path(event.project, event.issue)
         xml.title   "#{event.author_name} #{event.action_name} issue #{event.issue_title} at #{event.project.name}"
         xml.summary event.issue_description
       
       elsif event.merge_request?
-        xml.id      project_merge_request_path(event.project, event.merge_request)
+        xml.id      project_merge_request_url(event.project, event.merge_request)
         xml.link    :href => project_merge_request_path(event.project, event.merge_request)
         xml.title   "#{event.author_name} #{event.action_name} merge request #{event.merge_request_title} at #{event.project.name}"
       
       elsif event.push?   
         if event.push_with_commits?
           if event.commits_count > 1
-            xml.id      compare_project_commits_path(event.project, :from => event.parent_commit.id, :to => event.last_commit.id)
+            xml.id      compare_project_commits_url(event.project, :from => event.parent_commit.id, :to => event.last_commit.id)
             xml.link    :href => compare_project_commits_path(event.project, :from => event.parent_commit.id, :to => event.last_commit.id)            
           else
-            xml.id      project_commit_path(event.project, :id => event.last_commit.id)
+            xml.id      project_commit_url(event.project, :id => event.last_commit.id)
             xml.link    :href => project_commit_path(event.project, :id => event.last_commit.id)            
           end
         else
@@ -42,8 +42,11 @@ xml.feed "xmlns" => "http://www.w3.org/2005/Atom", "xmlns:media" => "http://sear
       
         xml.title   "#{event.author_name} #{event.push_action_name} #{event.ref_name} at #{event.project.name}"
         xml.summary :type => 'xhtml' do |xhtml|
-          event.commits.each do |commit|
-            xhtml.p "#{commit.id.to_s[0..10]} #{commit.author_name} - #{truncate(commit.safe_message, :length => 100)}"
+          xhtml.div(:xmlns => 'http://www.w3.org/1999/xhtml') do |div|
+            event.commits.each do |commit|
+              div.p "#{commit.author_name} (##{commit.id.to_s[0..10]})"
+              div.blockquote { |y| y << simple_format(h(commit.safe_message)) }
+            end
           end
         end
         
