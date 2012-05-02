@@ -44,7 +44,10 @@ xml.feed "xmlns" => "http://www.w3.org/2005/Atom", "xmlns:media" => "http://sear
         xml.summary :type => 'xhtml' do |xhtml|
           xhtml.div(:xmlns => 'http://www.w3.org/1999/xhtml') do |div|
             event.commits.each do |commit|
-              div.p "#{commit.author_name} (##{commit.id.to_s[0..10]})"
+              div.p {
+                div.strong "#{commit.author_name}"
+                div.text! " (##{commit.id.to_s[0..10]})"
+              }
               div.blockquote { |y| y << simple_format(h(commit.safe_message)) }
             end
           end
