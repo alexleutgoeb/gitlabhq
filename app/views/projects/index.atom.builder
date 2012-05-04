@@ -1,3 +1,5 @@
+xml = Builder::XmlMarkup.new
+
 xml.instruct!
 xml.feed "xmlns" => "http://www.w3.org/2005/Atom", "xmlns:media" => "http://search.yahoo.com/mrss/" do
   xml.title   "Recent events"
@@ -46,7 +48,10 @@ xml.feed "xmlns" => "http://www.w3.org/2005/Atom", "xmlns:media" => "http://sear
             event.commits.each do |commit|
               div.p {
                 div.strong "#{commit.author_name}"
-                div.text! " (##{commit.id.to_s[0..10]})"
+                div.text! " ("
+                div.a "##{commit.id.to_s[0..10]}", "href" => project_commit_path(event.project, :id => commit.id)
+                div.text! ") "
+                div.i "at #{commit.committed_date.strftime("%Y-%m-%d %H:%M:%S")}"
               }
               div.blockquote { |y| y << simple_format(h(commit.safe_message)) }
             end
